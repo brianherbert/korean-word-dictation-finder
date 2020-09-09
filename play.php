@@ -2,17 +2,33 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
+
+$destination_path = __DIR__ . '/cache/';
+
+
+
 use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+$log = new Logger('name');
+$log->pushHandler(new StreamHandler(__DIR__ . '/log/info.log', Logger::DEBUG));
+
+$log->info('All Args',$argv);
+
 
 if (!isset($argv[1])) {
-    echo "You must pass a word or phrase as an argument. If you have more than one word, you must use quotes.\n";
+    $message = "You must pass a word or phrase as an argument. If you have more than one word, you must use quotes.\n";
+    $log->info('Ran script without arguments.');
+    echo $message."\n";
     die();
 }
 
 //$word = "영어";
-$word = strtolower($argv[1]);
-$destination_path = __DIR__ . '/cache/';
+$word = trim(strtolower($argv[1]));
+
+$log->info('Ran script',["word" => $word]);
 
 $url = 'https://dict.naver.com/search.nhn?dicQuery='.urlencode($word);
 //echo $url . "\n";
@@ -26,6 +42,8 @@ $crawler->filter('a')->each(function ($node) {
     global $word;
     global $destination_path;
     global $client;
+    global $log;
+
     $pl = $node->attr('playlist');
     if ($pl) {
 
@@ -40,6 +58,8 @@ $crawler->filter('a')->each(function ($node) {
             $audio_word = strtolower($audio_word[0]);
         }else{
             //echo "Could not find the text version of the word.\n";
+            $log->info('Could not find the text version of the word.',["word" => $word]);
+            die();
         }
 
         $mp3_url = $pl;
