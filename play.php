@@ -15,7 +15,7 @@ $word = strtolower($argv[1]);
 $destination_path = __DIR__ . '/cache/';
 
 $url = 'https://dict.naver.com/search.nhn?dicQuery='.urlencode($word);
-echo $url . "\n";
+//echo $url . "\n";
 
 $client = new Client();
 
@@ -39,7 +39,7 @@ $crawler->filter('a')->each(function ($node) {
             $audio_word = explode(' ', $text);
             $audio_word = strtolower($audio_word[0]);
         }else{
-            echo "Could not find the text version of the word.\n";
+            //echo "Could not find the text version of the word.\n";
         }
 
         $mp3_url = $pl;
@@ -57,22 +57,22 @@ $crawler->filter('a')->each(function ($node) {
         if(!file_exists($destination)) {
 
             if(file_put_contents( $destination, file_get_contents($mp3_url))) {
-                echo "MP3 downloaded.\n";
+                //echo "MP3 downloaded.\n";
             } else {
-                echo "MP3 download failed.\n";
+                //echo "MP3 download failed.\n";
             }
         }
 
         if(strtolower($audio_word) == strtolower($word)) {
-            echo 'File location: '.$destination."\n";
-            shell_exec('afplay '.$destination);
-            echo "Success\n";
+            echo $destination."\n";
+            //shell_exec('afplay '.$destination);
+            //echo "Success\n";
             die();
         }
     }
 });
 
-echo "Dictation Not Found\n";
+echo "\n";
 
 
 
